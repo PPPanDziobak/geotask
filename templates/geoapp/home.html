@@ -23,12 +23,17 @@ xxxx
   <tr>
     <th>ID</th>
     <th>NAME</th>
+    <th>PLANE</th>
     <th>acction</th>
   </tr>
   <tr>
     <td>{{ el.id}}</td>
     <td>{{ el }}>/td>
-    <td><button type="submit">recreate</button></td>
+    <td>{{ el.plane }}>/td>
+    <td>
+        <button><a href="{% url 'geoapp:recreate_svg' el.id %}" target="_blank">recreate</a></button>
+<!--    to be implemented -->
+      </td>
   </tr>
 </table>
 {% endfor %}

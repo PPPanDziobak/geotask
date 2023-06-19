@@ -47,20 +47,18 @@ class GeometryView(View):
 
     def create_svg_file(self, coordinates_data, projection_plane):
         counted_data = self.count_data(coordinates_data)
-
         top_left_x, top_left_y = counted_data['top_left_x'], counted_data['top_left_y']
         width, height, depth = counted_data['width'], counted_data['height'], counted_data['depth']
         min_y, min_z = counted_data['min_y'], counted_data['min_z']
-        dwg = svgwrite.Drawing('projection.svg', profile='full')
+        dwg = svgwrite.Drawing(profile='full')
         if projection_plane == 'XY':
             dwg.add(dwg.rect((top_left_x, top_left_y), (width, height), fill='none', stroke='black'))
         elif projection_plane == 'XZ':
             dwg.add(dwg.rect((top_left_x, min_z), (width, depth), fill='none', stroke='red'))
         elif projection_plane == 'YZ':
             dwg.add(dwg.rect((min_y, min_z), (height, depth), fill='none', stroke='green'))
-
-        dwg.save()
-        return 'projection.svg'
+        svg_img = dwg.tostring()
+        return svg_img
 
     def get(self, request):
         form = GeoForm()
@@ -76,7 +74,11 @@ class GeometryView(View):
                 coordinates_dict = json.loads(coordinates_data)
                 validate = self.validate_coordinates(coordinates_dict)
                 if validate:
-                    svg_path = self.create_svg_file(coordinates_data, projection_plane)  # Przekazanie płaszczyzny projekcji
+                    svg_path = self.create_svg_file(coordinates_data, projection_plane.upper())
+                    geometry_obj = GeometryCoordinatesModel.objects.create(
+                        **coordinates_dict
+                    )
+                    geometry_obj.save()
                     response_data = {'status': 'success', 'svg_path': svg_path}
                 else:
                     response_data = {'status': 'error', 'message': 'Invalid form data'}
@@ -86,3 +88,4 @@ class GeometryView(View):
             response_data = {'status': 'error', 'message': 'Invalid form data'}
 
         return JsonResponse(response_data)
+
