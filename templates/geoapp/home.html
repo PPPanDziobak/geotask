@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+xxxx
+
+<form method="post">
+  {% csrf_token %}
+  {{ form}}
+
+      {% for error in form.errors %}
+    <p class="error">{{ error }}</p>
+  {% endfor %}
+  <button type="submit">send data</button>
+</form>
+<br><br>
+
+{% for el in queryset%}
+<table style="width:100%">
+  <tr>
+    <th>ID</th>
+    <th>NAME</th>
+    <th>PLANE</th>
+    <th>acction</th>
+  </tr>
+  <tr>
+    <td>{{ el.id}}</td>
+    <td>{{ el }}>/td>
+    <td>{{ el.plane }}>/td>
+    <td>
+        <button><a href="{% url 'geoapp:recreate_svg' el.id %}" target="_blank">recreate</a></button>
+<!--    to be implemented -->
+      </td>
+  </tr>
+</table>
+{% endfor %}
+</body>
+</html>
